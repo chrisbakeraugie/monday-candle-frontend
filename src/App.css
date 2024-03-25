@@ -10,3 +10,7 @@ body {
   align-items: center;
   justify-content: center;
 }
+
+.start-order-box {
+  overflow: visible;
+}
