@@ -18,7 +18,7 @@ const StartOrder = () => {
     selectedFragrances: [],
     firstName: "",
     lastName: "",
-    quantity: "",
+    quantity: { value: 1, label: 1 },
     inscription: "",
   });
   const [displayLimit, setDisplayLimit] = useState(false);
@@ -117,6 +117,7 @@ const StartOrder = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    if (!formData.quantity?.value) return;
     if (formData.selectedFragrances.length !== 3) {
       setDisplayLimit(true);
       return;
@@ -136,7 +137,7 @@ const StartOrder = () => {
       scent_profile: formData.selectedFragrances
         .map((fragrance) => fragrance.label)
         .join(", "),
-      quantity: formData.quantity,
+      quantity: formData.quantity.value,
     };
 
     const createItemMutation = `mutation createItem($boardId: ID!, $groupId: String!, $itemName: String!, $columnValues: JSON!) {
@@ -166,7 +167,7 @@ const StartOrder = () => {
         selectedFragrances: [],
         firstName: "",
         lastName: "",
-        quantity: "",
+        quantity: { value: 1, label: 1 },
         inscription: "",
       });
     } catch (error) {
@@ -174,6 +175,22 @@ const StartOrder = () => {
       setSuccessLabel(false);
       setFailLabel(true);
       console.error("Error creating item:", error);
+    }
+  };
+
+  const handleQuantityChange = (selectedQuantity, event) => {
+    switch (event.action) {
+      case "clear":
+        setFormData((prev) => ({ ...prev, quantity: null }));
+        break;
+      case "select-option":
+        setFormData((prev) => ({ ...prev, quantity: selectedQuantity }));
+        break;
+      default:
+        setFormData((prev) => ({
+          ...prev,
+          selectedFragrances: selectedQuantity,
+        }));
     }
   };
 
@@ -215,15 +232,22 @@ const StartOrder = () => {
               required
               value={formData.lastName}
             />
-            <TextField
-              onChange={(value) => handleTextFieldChange(value, "quantity")}
-              requiredAsterisk
-              title="Quantity"
-              required
-              type="number"
-              value={formData.quantity}
-            />
           </Flex>
+          {!!!formData.quantity?.value && (
+            <Label color="negative" text={`Must have quantity of at least 1`} />
+          )}
+          <Dropdown
+            placeholder="Quantity"
+            options={[
+              { value: 1, label: 1 },
+              { value: 2, label: 2 },
+              { value: 3, label: 3 },
+            ]}
+            defaultValue={formData.quantity}
+            requiredAsterisk
+            onChange={handleQuantityChange}
+            value={formData.quantity}
+          />
           {displayLimit && <Label text="Must be exactly 3 fragrances" />}
           <Dropdown
             multi
