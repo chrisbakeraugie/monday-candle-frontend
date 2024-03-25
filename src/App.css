@@ -14,3 +14,13 @@ body {
 .start-order-box {
   overflow: visible;
 }
+
+.sticky-tablist {
+  position: absolute;
+  top: 0;
+  z-index: 1000;
+}
+
+.fragrance-box {
+  width: 500px;
+}

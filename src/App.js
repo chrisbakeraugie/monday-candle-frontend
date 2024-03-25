@@ -6,12 +6,21 @@ import "monday-ui-react-core/dist/main.css";
 import axios from "axios";
 import { useAppContext } from "./state/AppContext";
 import StartOrder from "./components/forms/StartOrder";
+import { Tab, TabList } from "monday-ui-react-core";
+import { NAVIGATION_TABS } from "./utils/constants";
+import ManageFragrances from "./components/forms/ManageFragrances";
 
 // Usage of mondaySDK example, for more information visit here: https://developer.monday.com/apps/docs/introduction-to-the-sdk/
 const monday = mondaySdk();
 
 const App = () => {
-  const { setMondayContext, setFragrances, mondayContext } = useAppContext();
+  const {
+    setMondayContext,
+    setFragrances,
+    mondayContext,
+    setNavigationTab,
+    navigationTab,
+  } = useAppContext();
   const [isGroupCreationStarted, setIsGroupCreationStarted] = useState(false);
   const [isBoardColumnsCreationStarted, setIsBoardColumnsCreationStarted] =
     useState(false);
@@ -31,7 +40,9 @@ const App = () => {
     const currentBoardId = mondayContext?.data?.boardId ?? 6319041765; // TODO remove this reference
     const fetchFragrances = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/fragrance/");
+        const response = await axios.get(
+          `${process.env.REACT_APP_SERVER_URL}/fragrance/`
+        );
         setFragrances(response.data);
       } catch (error) {
         console.error("Could not fetch fragrances", error);
@@ -131,7 +142,16 @@ const App = () => {
 
   return (
     <div className="App">
-      <StartOrder />
+      <TabList
+        onTabChange={(value) => setNavigationTab(NAVIGATION_TABS[value])}
+        size="md"
+        className="sticky-tablist"
+      >
+        <Tab>New Order</Tab>
+        <Tab>Manage Fragrances</Tab>
+      </TabList>
+      {NAVIGATION_TABS[0] === navigationTab && <StartOrder />}
+      {NAVIGATION_TABS[1] === navigationTab && <ManageFragrances />}
     </div>
   );
 };
