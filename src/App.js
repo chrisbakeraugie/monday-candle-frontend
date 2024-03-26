@@ -9,6 +9,7 @@ import StartOrder from "./components/forms/StartOrder";
 import { Flex, Tab, TabList } from "monday-ui-react-core";
 import { NAVIGATION_TABS } from "./utils/constants";
 import ManageFragrances from "./components/forms/ManageFragrances";
+import FragrancesMondayService from "./services/FragrancesMondayService";
 
 // Usage of mondaySDK example, for more information visit here: https://developer.monday.com/apps/docs/introduction-to-the-sdk/
 const monday = mondaySdk();
@@ -20,6 +21,7 @@ const App = () => {
     mondayContext,
     setNavigationTab,
     navigationTab,
+    storeFragrancesOnMonday,
   } = useAppContext();
   const [isGroupCreationStarted, setIsGroupCreationStarted] = useState(false);
   const [isBoardColumnsCreationStarted, setIsBoardColumnsCreationStarted] =
@@ -40,10 +42,16 @@ const App = () => {
     const currentBoardId = mondayContext?.data?.boardId ?? 6319041765; // TODO remove this reference
     const fetchFragrances = async () => {
       try {
-        const response = await axios.get(
-          `${process.env.REACT_APP_SERVER_URL}/fragrance/`
-        );
-        setFragrances(response.data);
+        if (storeFragrancesOnMonday) {
+          const fragrancesService = new FragrancesMondayService(currentBoardId);
+          const allFragrances = await fragrancesService.getAllFragrances();
+          setFragrances(allFragrances);
+        } else {
+          const response = await axios.get(
+            `${process.env.REACT_APP_SERVER_URL}/fragrance/`
+          );
+          setFragrances(response.data);
+        }
       } catch (error) {
         console.error("Could not fetch fragrances", error);
       }
@@ -132,12 +140,17 @@ const App = () => {
     if (currentBoardId && !isGroupCreationStarted) {
       checkAndCreateGroups();
     }
-    fetchFragrances();
+
+    if (storeFragrancesOnMonday) {
+    } else {
+      fetchFragrances();
+    }
   }, [
     isBoardColumnsCreationStarted,
     isGroupCreationStarted,
     mondayContext,
     setFragrances,
+    storeFragrancesOnMonday,
   ]);
 
   return (

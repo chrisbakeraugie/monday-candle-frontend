@@ -1,10 +1,28 @@
 import React, { useMemo, useState } from "react";
 import axios from "axios";
-import { Box, Button, Dropdown, Flex, TextField } from "monday-ui-react-core";
+import {
+  Box,
+  Button,
+  Dropdown,
+  Flex,
+  TextField,
+  Toggle,
+} from "monday-ui-react-core";
 import { useAppContext } from "../../state/AppContext";
+import {
+  checkForBoardByName,
+  createBoardByName,
+  createColumnsInBoard,
+} from "../../utils/queries";
+import FragrancesMondayService from "../../services/FragrancesMondayService";
 
 const ManageFragrances = () => {
-  const { fragrances } = useAppContext();
+  const {
+    fragrances,
+    storeFragrancesOnMonday,
+    setStoreFragrancesOnMonday,
+    setFragrances,
+  } = useAppContext();
   const [disable, setDisable] = useState(false);
   const [createData, setCreateData] = useState({
     name: "",
@@ -107,6 +125,38 @@ const ManageFragrances = () => {
 
   const handleDeleteChange = (selectedItem) => {
     setDeleteItem(selectedItem);
+  };
+
+  const handleFragranceSourceChange = async (storeOnMonday) => {
+    if (!storeOnMonday) {
+      setStoreFragrancesOnMonday(false);
+      return;
+    }
+
+    const fragranceBoardSetup = async () => {
+      try {
+        const boardId = await checkForBoardByName("Fragrances");
+        if (boardId) {
+          const fragrancesService = new FragrancesMondayService(boardId);
+          const allFragrances = await fragrancesService.getAllFragrances();
+          setFragrances(allFragrances);
+        } else {
+          const createdBoardId = await createBoardByName("Fragrances");
+          await createColumnsInBoard(createdBoardId, [
+            { fieldName: "description", type: "text" },
+            { fieldName: "category", type: "text" },
+            { fieldName: "image_url", type: "text" },
+            { fieldName: "created_at", type: "date" },
+            { fieldName: "updated_at", type: "date" },
+          ]);
+          console.log("Created Columns");
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fragranceBoardSetup();
   };
 
   return (
@@ -226,6 +276,11 @@ const ManageFragrances = () => {
           </form>
         </Box>
       </Flex>
+      <h6>Use Monday.Com to Store Fragrances</h6>
+      <Toggle
+        onChange={handleFragranceSourceChange}
+        isDefaultSelected={storeFragrancesOnMonday}
+      />
     </Box>
   );
 };
