@@ -8,7 +8,7 @@ export const useAppContext = () => useContext(AppContext);
 export const AppProvider = ({ children }) => {
   const [mondayContext, setMondayContext] = useState();
   const [fragrances, setFragrances] = useState([]);
-  const [navigationTab, setNavigationTab] = useState(NAVIGATION_TABS[1]);
+  const [navigationTab, setNavigationTab] = useState(NAVIGATION_TABS[0]);
 
   const contextValues = {
     fragrances,

@@ -6,7 +6,7 @@ import "monday-ui-react-core/dist/main.css";
 import axios from "axios";
 import { useAppContext } from "./state/AppContext";
 import StartOrder from "./components/forms/StartOrder";
-import { Tab, TabList } from "monday-ui-react-core";
+import { Flex, Tab, TabList } from "monday-ui-react-core";
 import { NAVIGATION_TABS } from "./utils/constants";
 import ManageFragrances from "./components/forms/ManageFragrances";
 
@@ -142,16 +142,17 @@ const App = () => {
 
   return (
     <div className="App">
-      <TabList
-        onTabChange={(value) => setNavigationTab(NAVIGATION_TABS[value])}
-        size="md"
-        className="sticky-tablist"
-      >
-        <Tab>New Order</Tab>
-        <Tab>Manage Fragrances</Tab>
-      </TabList>
-      {NAVIGATION_TABS[0] === navigationTab && <StartOrder />}
-      {NAVIGATION_TABS[1] === navigationTab && <ManageFragrances />}
+      <Flex direction="Column">
+        <TabList
+          onTabChange={(value) => setNavigationTab(NAVIGATION_TABS[value])}
+          size="md"
+        >
+          <Tab>New Order</Tab>
+          <Tab>Manage Fragrances</Tab>
+        </TabList>
+        {NAVIGATION_TABS[0] === navigationTab && <StartOrder />}
+        {NAVIGATION_TABS[1] === navigationTab && <ManageFragrances />}
+      </Flex>
     </div>
   );
 };

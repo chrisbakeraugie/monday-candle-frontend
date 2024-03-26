@@ -116,95 +116,115 @@ const ManageFragrances = () => {
       padding={Box.paddings.LARGE}
       className="fragrance-box start-order-box"
     >
-      <Flex gap={30} direction="Column" align="stretch">
-        {/* Create Form */}
-        <form onSubmit={handleCreate}>
-          <TextField
-            value={createData.name}
-            onChange={(value) => setCreateData({ ...createData, name: value })}
-            title="Name"
-          />
-          <TextField
-            value={createData.description}
-            onChange={(value) =>
-              setCreateData({ ...createData, description: value })
-            }
-            title="Description"
-          />
-          <TextField
-            value={createData.category}
-            onChange={(value) =>
-              setCreateData({ ...createData, category: value })
-            }
-            title="Category"
-          />
-          <TextField
-            value={createData.image_url}
-            onChange={(value) =>
-              setCreateData({ ...createData, image_url: value })
-            }
-            title="Image URL"
-          />
-          <Button disable={disable} type="submit">
-            Create Fragrance
-          </Button>
-        </form>
-
-        {/* Update Form */}
-        <form onSubmit={handleUpdate}>
-          <Dropdown
-            placeholder="Fragrance to Update"
-            options={fragranceOptions}
-            className="dropdown-stories-styles_with-chips"
-            onChange={handleUpdateChange}
-          />
-          <TextField
-            title="Name"
-            value={updateData.name}
-            onChange={(value) => setUpdateData({ ...updateData, name: value })}
-            placeholder="New Name"
-          />
-          <TextField
-            title="Description"
-            value={updateData.description}
-            onChange={(value) =>
-              setUpdateData({ ...updateData, description: value })
-            }
-            placeholder="New Description"
-          />
-          <TextField
-            title="Category"
-            value={updateData.category}
-            onChange={(value) =>
-              setUpdateData({ ...updateData, category: value })
-            }
-            placeholder="New Category"
-          />
-          <TextField
-            title="image_url"
-            value={updateData.image_url}
-            onChange={(value) =>
-              setUpdateData({ ...updateData, image_url: value })
-            }
-            placeholder="Image URL"
-          />
-          <Button disable={disable} type="submit">
-            Update Fragrance
-          </Button>
-        </form>
-
-        {/* Delete Form */}
-        <form onSubmit={handleDelete}>
-          <Dropdown
-            placeholder="Fragrance to Delete"
-            options={fragranceOptions}
-            className="dropdown-stories-styles_with-chips"
-            onChange={handleDeleteChange}
-          />
-          <Button disable={disable} type="submit">
-            Delete Fragrance
-          </Button>
-        </form>
+      <Flex gap={10} direction="Row" align="Initial">
+        <Box
+          border={Box.borders.DEFAULT}
+          rounded={Box.roundeds.MEDIUM}
+          padding={Box.paddings.LARGE}
+          className="fragrance-box start-order-box"
+        >
+          <form onSubmit={handleCreate}>
+            <Button disable={disable} type="submit">
+              Create Fragrance
+            </Button>
+            <TextField
+              value={createData.name}
+              onChange={(value) =>
+                setCreateData({ ...createData, name: value })
+              }
+              title="Name"
+            />
+            <TextField
+              value={createData.description}
+              onChange={(value) =>
+                setCreateData({ ...createData, description: value })
+              }
+              title="Description"
+            />
+            <TextField
+              value={createData.category}
+              onChange={(value) =>
+                setCreateData({ ...createData, category: value })
+              }
+              title="Category"
+            />
+            <TextField
+              value={createData.image_url}
+              onChange={(value) =>
+                setCreateData({ ...createData, image_url: value })
+              }
+              title="Image URL"
+            />
+          </form>
+        </Box>
+        <Box
+          border={Box.borders.DEFAULT}
+          rounded={Box.roundeds.MEDIUM}
+          padding={Box.paddings.LARGE}
+          className="fragrance-box start-order-box"
+        >
+          <form onSubmit={handleUpdate}>
+            <Button disable={disable} type="submit">
+              Update Fragrance
+            </Button>
+            <Dropdown
+              placeholder="Fragrance to Update"
+              options={fragranceOptions}
+              className="dropdown-stories-styles_with-chips"
+              onChange={handleUpdateChange}
+            />
+            <TextField
+              title="Name"
+              value={updateData.name}
+              onChange={(value) =>
+                setUpdateData({ ...updateData, name: value })
+              }
+              placeholder="New Name"
+            />
+            <TextField
+              title="Description"
+              value={updateData.description}
+              onChange={(value) =>
+                setUpdateData({ ...updateData, description: value })
+              }
+              placeholder="New Description"
+            />
+            <TextField
+              title="Category"
+              value={updateData.category}
+              onChange={(value) =>
+                setUpdateData({ ...updateData, category: value })
+              }
+              placeholder="New Category"
+            />
+            <TextField
+              title="image_url"
+              value={updateData.image_url}
+              onChange={(value) =>
+                setUpdateData({ ...updateData, image_url: value })
+              }
+              placeholder="Image URL"
+            />
+          </form>
+        </Box>
+        <Box
+          border={Box.borders.DEFAULT}
+          rounded={Box.roundeds.MEDIUM}
+          padding={Box.paddings.LARGE}
+          className="fragrance-box start-order-box"
+        >
+          <form onSubmit={handleDelete}>
+            <Button disable={disable} type="submit">
+              Delete Fragrance
+            </Button>
+            <Dropdown
+              placeholder="Fragrance to Delete"
+              options={fragranceOptions}
+              className="dropdown-stories-styles_with-chips"
+              onChange={handleDeleteChange}
+            />
+          </form>
+        </Box>
       </Flex>
     </Box>
   );
