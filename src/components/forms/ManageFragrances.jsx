@@ -22,6 +22,8 @@ const ManageFragrances = () => {
     storeFragrancesOnMonday,
     setStoreFragrancesOnMonday,
     setFragrances,
+    fragranceBoardId,
+    setFragranceBoardId,
   } = useAppContext();
   const [disable, setDisable] = useState(false);
   const [createData, setCreateData] = useState({
@@ -61,51 +63,79 @@ const ManageFragrances = () => {
     e.preventDefault();
     setDisable(true);
     try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_SERVER_URL}/fragrance/`,
-        createData
-      );
-      console.log(response.data);
-      setDisable(false);
+      if (storeFragrancesOnMonday) {
+        const fragrancesService = new FragrancesMondayService(fragranceBoardId);
+        await fragrancesService.createFragrance(createData);
+        fetchFragrances(fragranceBoardId);
+        setDisable(false);
+      } else {
+        const response = await axios.post(
+          `${process.env.REACT_APP_SERVER_URL}/fragrance/`,
+          createData
+        );
+        setDisable(false);
+        fetchFragrances();
+      }
     } catch (error) {
       console.error(error);
       setDisable(false);
     }
+    setCreateData({ name: "", description: "", category: "", image_url: "" });
   };
 
   const handleUpdate = async (e) => {
     e.preventDefault();
     setDisable(true);
     try {
-      console.log(updateData);
-
-      const response = await axios.put(
-        `${process.env.REACT_APP_SERVER_URL}/fragrance/${updateData._id}`,
-        updateData
-      );
-      console.log(response.data);
-      setDisable(false);
+      if (storeFragrancesOnMonday) {
+        const fragrancesService = new FragrancesMondayService(fragranceBoardId);
+        await fragrancesService.updateFragranceById(updateData._id, updateData);
+        fetchFragrances(fragranceBoardId);
+        setDisable(false);
+      } else {
+        const response = await axios.put(
+          `${process.env.REACT_APP_SERVER_URL}/fragrance/${updateData._id}`,
+          updateData
+        );
+        setDisable(false);
+        fetchFragrances();
+      }
     } catch (error) {
       console.error(error);
       setDisable(false);
     }
+    setUpdateData({
+      id: "",
+      name: "",
+      description: "",
+      category: "",
+      image_url: "",
+    });
   };
 
   const handleDelete = async (e) => {
     e.preventDefault();
-    setDisable(true);
     // eslint-disable-next-line no-restricted-globals
     if (!confirm(`Are you sure you want to delete ${deleteItem.label}`)) return;
+    setDisable(true);
     try {
-      const response = await axios.delete(
-        `${process.env.REACT_APP_SERVER_URL}/fragrance/${deleteItem.value}`
-      );
-      console.log(response.data);
-      setDisable(false);
+      if (storeFragrancesOnMonday) {
+        const fragranceService = new FragrancesMondayService(fragranceBoardId);
+        await fragranceService.deleteFragranceById(deleteItem.value);
+        fetchFragrances(fragranceBoardId);
+        setDisable(false);
+      } else {
+        const response = await axios.delete(
+          `${process.env.REACT_APP_SERVER_URL}/fragrance/${deleteItem.value}`
+        );
+        setDisable(false);
+        fetchFragrances();
+      }
     } catch (error) {
       console.error(error);
       setDisable(false);
     }
+    setDeleteItem(null);
   };
 
   const handleUpdateChange = (selectedItem, action) => {
@@ -119,7 +149,6 @@ const ManageFragrances = () => {
     const chosenFragrance = fragrances.filter(
       (fragrance) => fragrance._id === selectedItem.value
     )[0];
-    console.log(chosenFragrance);
     setUpdateData({ ...chosenFragrance });
   };
 
@@ -132,6 +161,7 @@ const ManageFragrances = () => {
       setStoreFragrancesOnMonday(false);
       return;
     }
+    setStoreFragrancesOnMonday(true);
 
     const fragranceBoardSetup = async () => {
       try {
@@ -140,6 +170,7 @@ const ManageFragrances = () => {
           const fragrancesService = new FragrancesMondayService(boardId);
           const allFragrances = await fragrancesService.getAllFragrances();
           setFragrances(allFragrances);
+          setFragranceBoardId(boardId);
         } else {
           const createdBoardId = await createBoardByName("Fragrances");
           await createColumnsInBoard(createdBoardId, [
@@ -149,14 +180,27 @@ const ManageFragrances = () => {
             { fieldName: "created_at", type: "date" },
             { fieldName: "updated_at", type: "date" },
           ]);
-          console.log("Created Columns");
+          setFragranceBoardId(createdBoardId);
         }
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
     };
 
     fragranceBoardSetup();
+  };
+
+  const fetchFragrances = async (boardId) => {
+    if (boardId) {
+      const fragranceService = new FragrancesMondayService(boardId);
+      const fragrances = await fragranceService.getAllFragrances();
+      setFragrances(fragrances);
+    } else {
+      const response = await axios.get(
+        `${process.env.REACT_APP_SERVER_URL}/fragrance/`
+      );
+      setFragrances(response.data);
+    }
   };
 
   return (

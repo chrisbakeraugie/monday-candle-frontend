@@ -10,6 +10,7 @@ export const AppProvider = ({ children }) => {
   const [fragrances, setFragrances] = useState([]);
   const [navigationTab, setNavigationTab] = useState(NAVIGATION_TABS[0]);
   const [storeFragrancesOnMonday, setStoreFragrancesOnMonday] = useState(false);
+  const [fragranceBoardId, setFragranceBoardId] = useState(null);
 
   const contextValues = {
     fragrances,
@@ -20,6 +21,8 @@ export const AppProvider = ({ children }) => {
     setNavigationTab,
     storeFragrancesOnMonday,
     setStoreFragrancesOnMonday,
+    fragranceBoardId,
+    setFragranceBoardId,
   };
 
   return (

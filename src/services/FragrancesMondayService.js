@@ -62,10 +62,15 @@ class FragrancesMondayService {
     const formattedDate = today.toISOString().split("T")[0];
     const mutation =
       "mutation ($myBoardId:ID!, $myItemId:ID!, $myColumnValues:JSON!) { change_multiple_column_values(item_id:$myItemId, board_id:$myBoardId, column_values: $myColumnValues) { id } }";
+    const { _id, ...valuesWithoutId } = values;
+
     const variables = {
       myBoardId: this.boardId,
       myItemId: fragranceId,
-      myColumnValues: JSON.stringify({ ...values, updated_at: formattedDate }),
+      myColumnValues: JSON.stringify({
+        ...valuesWithoutId,
+        updated_at: formattedDate,
+      }),
     };
     try {
       const response = await monday.api(mutation, { variables });
