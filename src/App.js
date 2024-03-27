@@ -39,7 +39,7 @@ const App = () => {
   }, [setFragrances, setMondayContext]);
 
   useEffect(() => {
-    const currentBoardId = mondayContext?.data?.boardId ?? 6319041765; // TODO remove this reference
+    const currentBoardId = mondayContext?.data?.boardId ?? 6341646110; // TODO remove this reference
     const fetchFragrances = async () => {
       try {
         if (storeFragrancesOnMonday) {
@@ -76,14 +76,13 @@ const App = () => {
         }`;
 
         const columnDetails = [
-          { title: "Sales Associate", columnType: "text" },
+          { title: "Customer Name", columnType: "text" },
           { title: "Inscription", columnType: "text" },
-          {
-            title: "Status",
-            columnType: "status",
-          },
+          { title: "Status", columnType: "status" },
           { title: "Scent Profile", columnType: "text" },
           { title: "Quantity", columnType: "numbers" },
+          { title: "Delivery Date", columnType: "date" },
+          { title: "Submitted Date", columnType: "date" },
         ];
 
         for (const { title, columnType } of columnDetails) {
@@ -114,7 +113,13 @@ const App = () => {
           variables: { boardId: [currentBoardId] },
         });
         const existingGroups = existingGroupsResponse.data.boards[0].groups;
-        const requiredGroups = ["Done", "Working On It", "Received"];
+        const requiredGroups = [
+          "At Risk",
+          "Behind Schedule",
+          "Done",
+          "Working On It",
+          "Received",
+        ];
         const existingGroupTitles = existingGroups.map((group) => group.title);
 
         for (let groupName of requiredGroups) {
